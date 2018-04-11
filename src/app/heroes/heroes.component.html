@@ -1,0 +1,63 @@
+<h2>My Heroes</h2>
+<div>
+  <!-- (click) passes input value to add() and then clears the input  (click)="add(heroName.value); heroName.value=''"-->
+  <a routerLink="/create">
+    Add new hero
+</a>
+</div>
+<mat-form-field class="example-full-width">
+    <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Choose a date">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+</mat-form-field>
+<div>
+<input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" />
+   
+<table  matSort (matSortChange)="sortData($event)">
+  <tr>
+    <th mat-sort-header="scope">Scope
+        <mat-icon>favorite</mat-icon>
+    </th>
+    <th mat-sort-header="name" >Hero name
+        <mat-icon>accessibility</mat-icon>
+    </th> 
+    <th mat-sort-header="color">Color
+        <mat-icon>color_lens</mat-icon>
+    </th>
+    <th mat-sort-header="type">Type
+        <mat-icon>style</mat-icon>
+    </th>
+    <th mat-sort-header="date">Date
+        <mat-icon>date_range</mat-icon>
+    </th>
+    <th>Delete
+        <mat-icon>delete_forever</mat-icon>
+    </th>
+    <th>Edit
+        <mat-icon>edit</mat-icon>
+    </th>
+  </tr>
+  <tr *ngFor="let hero of heroes$ | async"> 
+    
+      <td  class="panel-{{hero.color}}" >{{hero.scope}}</td>
+      <td  class="panel-{{hero.color}}">{{hero.name}}</td> 
+      <td  class="panel-{{hero.color}}">{{hero.color}}</td>  
+      <td  class="panel-{{hero.color}}">{{hero.type}}</td>
+      <td  class="panel-{{hero.color}}" >{{hero.date}}</td>
+      <td>
+        <button class="delete" (click)="openModal(hero)" title="delete hero" > 
+            <mat-icon>clear</mat-icon> 
+        </button>
+
+      </td>
+      <td>
+        <button class='delete' routerLink="/detail/{{hero._id}}"> <mat-icon>redo</mat-icon> </button>
+      </td>
+  </tr>
+</table> 
+</div>
+<app-hero-search></app-hero-search>
+
+
+
+

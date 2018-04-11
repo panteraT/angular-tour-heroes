@@ -1,0 +1,60 @@
+<div *ngIf="hero">
+
+  <h2>{{ hero.name | uppercase }} Details</h2>
+  <div><span>id: </span>{{hero._id}}</div>
+  <table>
+    <tr>
+      <th >Hero name</th> 
+      <th >Color</th>
+      <th> Scope</th>
+      <th> Type </th>
+    </tr>
+    <tr > 
+        <td >          
+           <mat-form-field class="example-form-field">
+            <input matInput type="text" placeholder="name" [(ngModel)]="hero.name"/>
+          </mat-form-field>
+          
+        </td>
+        <td >
+          <form class="example-form" >
+            <mat-form-field class="example-full-width">
+              <input type="text" placeholder="choose one"  [(ngModel)]="hero.color" aria-label="Number" matInput [formControl]="colorControl" [matAutocomplete]="auto" >
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let color of colors" [value]="color" >
+                    {{ color }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+          </form> 
+        </td>  
+        <td>
+            <mat-button-toggle-group #group="matButtonToggleGroup" vertical="true" class="toggle-group">
+                <mat-button-toggle (click)="incScope()">
+                  <mat-icon>exposure_plus_1</mat-icon>
+                </mat-button-toggle>
+                <mat-button-toggle (click)="decScope()">
+                  <mat-icon>exposure_neg_1</mat-icon>
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+            <label class="input-scope" >{{hero.scope}}</label>
+        </td> 
+        <td >
+          <form class="example-form" >
+            <mat-form-field class="example-full-width">
+              <input type="text" placeholder="choose one"  [(ngModel)]="hero.type" aria-label="Number" matInput [formControl]="typeControl" [matAutocomplete]="auto1" >
+                <mat-autocomplete #auto1="matAutocomplete">
+                  <mat-option *ngFor="let type of types" [value]="type" >
+                    {{ type }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+          </form> 
+        </td>  
+    </tr>
+  </table>
+
+  <button (click)="goBack()"><mat-icon>arrow_back</mat-icon> go back</button>
+    <button (click)="save()"><mat-icon>save</mat-icon> save </button>
+  
+</div>

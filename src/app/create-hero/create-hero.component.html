@@ -1,0 +1,57 @@
+<mat-form-field class="date">
+  <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Choose a date">
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+</mat-form-field>
+
+<table>
+  <tr>
+    <th >Hero name</th> 
+    <th >Color</th>
+    <th> Scope</th>
+    <th> Type </th>
+    <th> </th>
+  </tr>
+  <tr > 
+      <td >          
+         <mat-form-field class="example-form-field">
+          <input matInput type="text" placeholder="name" #heroName/>
+         </mat-form-field>
+        
+      </td>
+      <td >
+        <form class="example-form" >
+          <mat-form-field class="example-full-width">
+            <input type="text" placeholder="choose one" aria-label="Number" matInput [formControl]="colorControl" [matAutocomplete]="auto" #heroColor/>
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let color of colors" [value]="color">
+                  {{ color }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+        </form> 
+      </td>  
+      <td>
+        <mat-form-field class="example-form-field">
+          <input class="scope" matInput type="number" placeholder="scope" #heroScope/>
+         </mat-form-field>
+      </td> 
+      <td >
+        <form class="example-form" >
+          <mat-form-field class="example-full-width">
+            <input type="text" placeholder="choose one"   aria-label="Number" matInput [formControl]="typeControl" [matAutocomplete]="auto1" #heroType/>
+              <mat-autocomplete #auto1="matAutocomplete">
+                <mat-option *ngFor="let type of types" [value]="type">
+                  {{ type }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+        </form> 
+      </td>  
+      
+      <td> 
+        <button mat-button (click)="add(heroName.value, heroColor.value, heroScope.value, heroType.value); heroName.value='';heroColor.value='';heroType.value='';" routerLink="/heroes">
+          Add new hero
+        </button></td>
+  </tr>
+</table>

@@ -1,0 +1,17 @@
+<div id="search-component">
+  <h4>Hero Search</h4>
+
+  <input #searchBox id="search-box" (keyup)="search(searchBox.value)" />
+
+  
+    <table class="search-result">
+      <tr *ngFor="let hero of heroes$ | async" routerLink="/detail/{{hero._id}}">
+          <td>name: {{hero.name}}</td>
+          <td>color: {{hero.color}}</td>
+          <td>type: {{hero.type}}</td>
+          <td>scope: {{hero.scope}}</td>
+      </tr>
+    </table>
+    
+  
+</div>

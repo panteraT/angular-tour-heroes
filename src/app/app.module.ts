@@ -23,14 +23,9 @@ import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { AppRoutingModule } from './/app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { CreateHeroComponent } from './create-hero/create-hero.component';
 import { DialogViewComponent } from './dialog-view/dialog-view.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-
-//import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-//import { InMemoryDataService }  from './in-memory-data.service';
-//import { HeroSearchComponent } from './hero-search/hero-search.component';
 
 
 @NgModule({
@@ -40,9 +35,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     HeroDetailComponent,
     MessagesComponent,
     DashboardComponent,
-    HeroSearchComponent,
     CreateHeroComponent,
-    DialogViewComponent
+    DialogViewComponent,
+  
   ],
   
   imports: [

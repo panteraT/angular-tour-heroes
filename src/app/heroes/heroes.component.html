@@ -37,7 +37,7 @@
         <mat-icon>edit</mat-icon>
     </th>
   </tr>
-  <tr *ngFor="let hero of heroes$ | async"> 
+  <tr *ngFor="let hero of heroes"> 
     
       <td  class="panel-{{hero.color}}" >{{hero.scope}}</td>
       <td  class="panel-{{hero.color}}">{{hero.name}}</td> 
@@ -56,7 +56,6 @@
   </tr>
 </table> 
 </div>
-<app-hero-search></app-hero-search>
 
 
 

@@ -42,8 +42,8 @@ export class CreateHeroComponent implements OnInit {
       name = name.trim();
       color = color.trim();
       type = type.trim();
-     
-      if (!name || !color || !type || scope<0 ) { 
+
+      if (!name || !color || !type || !scope || scope<0 ) { 
         this.snackBar.open("Wrong data! ", "Ok");
         return; 
       }

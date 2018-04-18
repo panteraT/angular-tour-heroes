@@ -1,4 +1,4 @@
-import { Component, OnInit,Inject } from '@angular/core';
+import { Component, OnInit,Inject, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import {Sort, MatSort, MatSortable} from '@angular/material';
@@ -15,23 +15,19 @@ import { switchMap } from 'rxjs/operators/switchMap';
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
-  styleUrls: ['./heroes.component.scss']
+  styleUrls: ['./heroes.component.scss'],
+
 })
 
 
 export class HeroesComponent implements OnInit{
-
-  heroes$: Observable<Hero[]>;
-  private searchTerms = new Subject<string>();
   
-  index: number[];
-  verification: boolean;
+  heroes: Hero[];
   minDate = new Date();
   maxDate = new Date();
 
-  constructor( private heroService: HeroService, public dialog: MatDialog) { 
-   
-  }
+  constructor (private heroService: HeroService, public dialog: MatDialog) {}
+
   public openModal(hero: Hero){
     const dialog =this.dialog.open(DialogViewComponent, {data: {question: 'Do you really want to delete the hero?', hero: hero}});
     
@@ -42,56 +38,51 @@ export class HeroesComponent implements OnInit{
       }
     });
   }
-  // Push a search term into the observable stream.
-  search(term: string): void {
-    this.searchTerms.next(term);
-  }
 
   ngOnInit() {
-    this.heroes$ = this.heroService.getHeroes();
-      
-    this.heroes$ = this.searchTerms.pipe(
-      // wait 300ms after each keystroke before considering the term
-      debounceTime(300),
-
-      // ignore new term if same as previous term
-      distinctUntilChanged(),
-
-      // switch to new search observable each time the term changes
-      switchMap((term: string) => this.heroService.searchHeroes(term)),
-    );  
-  /*  let defSort: Sort;
-    defSort.direction = 'asc';
-    defSort.active = 'scope';
-    this.sortData(defSort);*/
+    this.heroService.getHeroes().subscribe(heroes => {
+      this.heroes = heroes});
   }
 
   getHeroes(): void {
-    this.heroes$ = this.heroService.getHeroes();
+    this.heroService.getHeroes().subscribe(heroes => {
+      this.heroes = heroes});
    
+  }
+
+  search(term: string){
+    term = term.trim();
+    if (term){
+    this.heroService.searchHeroes(term).subscribe(heroes=> {
+      this.heroes = heroes})
+    }
+    else this.getHeroes();
   }
 
   add(name: string): void {
     name = name.trim();
     if (!name) { return; }
-    this.heroService.addHero({ name } as Hero).subscribe();
-    this.getHeroes();
+    this.heroService.addHero({ name } as Hero)
+    .subscribe(hero => {
+      this.heroes.push(hero);
+    });
+
   }
 
   delete(hero: Hero): void {
-  //  this.heroes = this.heroes.filter(h => h !== hero);
+    this.heroes = this.heroes.filter(h => h !== hero);
     this.heroService.deleteHero(hero).subscribe();
     this.getHeroes();
   }
 
   sortData(sort: Sort) {
-    const data = this.heroes$.map(h=>h.slice());
+    const data = this.heroes.slice();
     if (!sort.active || sort.direction == '') {
-      this.heroes$ = data;
+      this.heroes = data;
       return;
     }
 
-    this.heroes$ = data.map(h=>h.sort((a, b) => {
+    this.heroes = data.sort((a, b) => {
       let isAsc = sort.direction == 'asc';
       switch (sort.active) {
         case 'name': return compare(a.name, b.name, isAsc);
@@ -101,7 +92,7 @@ export class HeroesComponent implements OnInit{
         case 'date': return compare(a.date, b.date, isAsc);
         default: return 0;
       }
-    }));
+    });
   }
   
 }

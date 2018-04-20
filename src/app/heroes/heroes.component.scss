@@ -93,7 +93,23 @@ a:hover {
 a.active {
   color: #039be5;
 }
+
+.search{
+  width: 230px;
+  min-height: 25px; 
+  border: 1px solid #607D8B;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+.search button{
+  
+  background: white;
+  border: none;  
+}
+
+
 #search-box {
-  width: 200px;
-  height: 20px;
+  width:  175px;
+  border: none;
+  outline: none;
 }

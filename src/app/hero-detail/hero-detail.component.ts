@@ -22,9 +22,6 @@ export class HeroDetailComponent implements OnInit {
   colorControl: FormControl = new FormControl();
   typeControl: FormControl = new FormControl();
 
-  //color: string;
-//  type: string;
- // scope: number;
   message = "Wrong data!"
   colors =["grey", "red", "green", "blue"];
   types = ["warrior","hunter","healer","mage","rogue"];
@@ -65,7 +62,8 @@ export class HeroDetailComponent implements OnInit {
   save(): void {
     var testC =false;
     var testT = false;
-    if (this.hero.color && this.hero.name && this.hero.type){
+    var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'); 
+    if (this.hero.color && this.hero.name && this.hero.type && regul.test(this.hero.name)){
      
       for (var i=0; i<this.colors.length; i++){
         if (this.hero.color == this.colors[i]){

@@ -5,13 +5,13 @@
     Add new hero
 </a>
 </div>
-<mat-form-field class="example-full-width">
-    <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Choose a date">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-</mat-form-field>
+
 <div>
-<input #searchBox id="search-box" (keyup)="search(searchBox.value)" placeholder="Search" />
+    <div class="search">
+        <input #searchBox id="search-box" (keyup.enter)="search(searchBox.value)" placeholder="Search" />
+        <button (click)="search(searchBox.value)"><mat-icon>search</mat-icon></button>
+    </div>
+    
    
 <table  matSort (matSortChange)="sortData($event)">
   <tr>

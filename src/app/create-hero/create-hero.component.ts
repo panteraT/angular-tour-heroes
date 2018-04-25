@@ -27,6 +27,7 @@ export class CreateHeroComponent implements OnInit {
 
   constructor( 
     private route: ActivatedRoute,
+    private location: Location,
     private heroService: HeroService,
     public snackBar: MatSnackBar) { }
 
@@ -79,8 +80,8 @@ export class CreateHeroComponent implements OnInit {
         .subscribe(hero => {
           this.heroes.push(hero);
         });
-     // this.snackBar.open("The hero "+name+" was added! ", "Ok");
-      window.location.href="/heroes";
+      this.snackBar.open("The hero "+name+" was added! ", "Ok");
+      this.location.back();
     }
 
     ngOnInit() {

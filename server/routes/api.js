@@ -102,7 +102,7 @@ router.post('/heroes', function(req, res){
         
       };
     var hero = {
-        name: req.body.name,
+        name: req.body.name, 
         color: req.body.color, 
         scope: req.body.scope,
         date: new Date().toLocaleString("en-US",options),

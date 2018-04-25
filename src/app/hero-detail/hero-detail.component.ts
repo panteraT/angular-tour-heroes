@@ -5,6 +5,10 @@ import { Location } from '@angular/common';
 import {FormControl} from '@angular/forms';
 import {MatSnackBar} from '@angular/material';
 import { HeroService }  from '../hero.service';
+import { filter } from 'rxjs/operators';
+import { Observer } from 'rxjs/Observer';
+import { IfObservable } from 'rxjs/observable/IfObservable';
+import { Observable } from 'rxjs/Observable';
 
 
 @Component({
@@ -19,10 +23,10 @@ export class HeroDetailComponent implements OnInit {
 
   @Input() hero: Hero;
 
+ // heroes: Observable<Hero[]>;
   colorControl: FormControl = new FormControl();
   typeControl: FormControl = new FormControl();
 
-  message = "Wrong data!"
   colors =["grey", "red", "green", "blue"];
   types = ["warrior","hunter","healer","mage","rogue"];
 
@@ -39,8 +43,8 @@ export class HeroDetailComponent implements OnInit {
   
   getHero(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.heroService.getHero(id)
-      .subscribe(hero => this.hero = hero);
+    this.heroService.getHero(id).subscribe(hero => this.hero = hero);
+    
   }
 
   incScope(){
@@ -60,31 +64,29 @@ export class HeroDetailComponent implements OnInit {
   }
   
   save(): void {
-    var testC =false;
-    var testT = false;
     var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'); 
-    if (this.hero.color && this.hero.name && this.hero.type && regul.test(this.hero.name)){
+
+    console.log("name "+ this.hero.name + " color "+this.hero.color);
+
+    if (!this.hero.name  || !regul.test(this.hero.name)) { 
+      this.snackBar.open("Wrong name! ", "Ok");
+      return; 
+    }
+
+    if (!this.hero.color || !(this.colors.find(c=>c==this.hero.color)) ){
+      this.snackBar.open("Wrong color!", "Ok");
+      return;
+    } 
+    
+    if (!this.hero.type || !(this.types.find(t=>t==this.hero.type)) ){
+      this.snackBar.open("Wrong type!", "Ok");
+      return;
+    }  
+    
+    this.heroService.updateHero(this.hero).subscribe(() => this.goBack());
+    this.snackBar.open("Hero "+this.hero.name+" was changed!", "Ok"); 
      
-      for (var i=0; i<this.colors.length; i++){
-        if (this.hero.color == this.colors[i]){
-          testC = true;
-          break;
-        }
-      }
-      
-      for (var i=0; i<this.types.length; i++){
-        if (this.hero.type == this.types[i]){
-          testT= true;
-          break;
-        }
-      }
-      if (testT && testC) { 
-        this.heroService.updateHero(this.hero)
-        .subscribe(() => this.goBack());
-        this.message = this.hero.name + " was changed!"
-      }   
    }
-   this.snackBar.open(this.message, "Ok");
-  }
+   
   
 }

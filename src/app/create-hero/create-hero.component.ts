@@ -38,33 +38,41 @@ export class CreateHeroComponent implements OnInit {
 
     add(name: string, scope: number): void {
       var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'); 
-      var testC = false;
-      var testT= false;
       name = name.trim();
-      var color = this.colorControl.value.trim();
-      var type = this.typeControl.value.trim();
+      try{ 
+        var color = this.colorControl.value.trim();       
+        if (!this.colors.find(c=>c==color)) {
+          throw new SyntaxError("Wrong color");
+        }
+      }
+      catch(e){
+        this.snackBar.open("Wrong color! ", "Ok");
+        return;
+      }
+     
+      try{ 
+        var type = this.typeControl.value.trim();
+        if(!this.types.find(t=>t==type)){
+          throw new SyntaxError("Wrong type");
+        }
+      }
+      catch(e){
+        this.snackBar.open("Wrong type! ", "Ok");
+        return;
+      }
 
-      console.log(name +" color "+ color+ " type "+ type);
-      if (!name || !color || !type || !scope || scope<0 || !regul.test(name)) { 
-        this.snackBar.open("Wrong data! ", "Ok");
+      if (!name  || !regul.test(name)) { 
+        this.snackBar.open("Wrong name! ", "Ok");
         return; 
       }
-      
-      for (var i=0; i<this.colors.length; i++){
-        if (color == this.colors[i]){
-          testC = true;
-          break;
-        }
-      }
-      for (var i=0; i<this.types.length; i++){
-        if (type == this.types[i]){
-          testT = true;
-          break;
-        }
-      }
-      if (!testT || !testC) {
-        this.snackBar.open("Wrong data! ", "Ok");
+      else if (this.heroes.find(h=>h.name==name)){
+        this.snackBar.open("This name already exists! ", "Ok");
         return;
+      }
+      
+      if (!scope || scope<0){
+        this.snackBar.open("Wrong scope! ", "Ok");
+        return; 
       }
 
       this.heroService.addHero({ name, color, scope, type } as Hero)
@@ -72,7 +80,7 @@ export class CreateHeroComponent implements OnInit {
           this.heroes.push(hero);
         });
       this.snackBar.open("The hero "+name+" was added! ", "Ok");
-
+      window.location.href="/heroes";
     }
 
     ngOnInit() {

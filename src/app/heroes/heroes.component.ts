@@ -1,7 +1,7 @@
 import { Component, OnInit,Inject, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import {Sort, MatSort, MatSortable} from '@angular/material';
+import {Sort, MatSort, MatSortable, MatSnackBar} from '@angular/material';
 import { Hero } from '../hero';
 import {HeroService} from '../hero.service';
 import { forEach } from '@angular/router/src/utils/collection';
@@ -26,7 +26,10 @@ export class HeroesComponent implements OnInit{
   minDate = new Date();
   maxDate = new Date();
 
-  constructor (private heroService: HeroService, public dialog: MatDialog) {}
+  constructor (
+      private heroService: HeroService,
+      public dialog: MatDialog,
+      public snackBar: MatSnackBar) {}
 
   public openModal(hero: Hero){
     const dialog =this.dialog.open(DialogViewComponent, {data: {question: 'Do you really want to delete the hero?', hero: hero}});
@@ -63,6 +66,7 @@ export class HeroesComponent implements OnInit{
   delete(hero: Hero): void {
     this.heroes = this.heroes.filter(h => h !== hero);
     this.heroService.deleteHero(hero).subscribe();
+    this.snackBar.open("The hero "+hero.name+" was deleted! ", "Ok");
     this.getHeroes();
   }
 

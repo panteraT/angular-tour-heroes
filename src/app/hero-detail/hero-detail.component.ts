@@ -66,8 +66,6 @@ export class HeroDetailComponent implements OnInit {
   save(): void {
     var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'); 
 
-    console.log("name "+ this.hero.name + " color "+this.hero.color);
-
     if (!this.hero.name  || !regul.test(this.hero.name)) { 
       this.snackBar.open("Wrong name! ", "Ok");
       return; 

@@ -79,7 +79,7 @@ export class CreateHeroComponent implements OnInit {
         .subscribe(hero => {
           this.heroes.push(hero);
         });
-      this.snackBar.open("The hero "+name+" was added! ", "Ok");
+     // this.snackBar.open("The hero "+name+" was added! ", "Ok");
       window.location.href="/heroes";
     }
 

@@ -23,7 +23,7 @@ export class HeroDetailComponent implements OnInit {
 
   @Input() hero: Hero;
 
- // heroes: Observable<Hero[]>;
+  heroes: Hero[];
   colorControl: FormControl = new FormControl();
   typeControl: FormControl = new FormControl();
 
@@ -44,7 +44,7 @@ export class HeroDetailComponent implements OnInit {
   getHero(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.heroService.getHero(id).subscribe(hero => this.hero = hero);
-    
+    this.heroService.getHeroes().subscribe(heroes=> this.heroes = heroes);
   }
 
   incScope(){
@@ -66,6 +66,8 @@ export class HeroDetailComponent implements OnInit {
   save(): void {
     var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'); 
 
+    this.heroes = this.heroes.filter(h=>h._id!==this.hero._id);
+
     if (!this.hero.name  || !regul.test(this.hero.name)) { 
       this.snackBar.open("Wrong name! ", "Ok");
       return; 
@@ -80,6 +82,11 @@ export class HeroDetailComponent implements OnInit {
       this.snackBar.open("Wrong type!", "Ok");
       return;
     }  
+
+    if (this.heroes.find(h=>h.name===this.hero.name)){
+        this.snackBar.open("This hero already exists!", "Ok");
+        return;
+    }
     
     this.heroService.updateHero(this.hero).subscribe(() => this.goBack());
     this.snackBar.open("Hero "+this.hero.name+" was changed!", "Ok"); 

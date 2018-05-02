@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { Hero } from './hero';
 import { MessageService } from './message.service';
+import { MatSnackBar } from '@angular/material';
 
 
 @Injectable()
@@ -18,14 +19,15 @@ export class HeroService {
   
   constructor(
     private http: HttpClient,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    public snackBar: MatSnackBar) { }
 
 
   getHeroes(): Observable<Hero[]> {
       return this.http.get<Hero[]>(this.heroesUrl)
       .pipe(
         tap(heroes => this.log(`fetched heroes`)),
-        catchError(this.handleError('getHeroes', []))
+        catchError(this.handleError('get Heroes', []))
       );
   }
   
@@ -34,7 +36,7 @@ export class HeroService {
       return this.http.get<Hero>(url)    
       .pipe(
         tap(_ => this.log(`fetched hero id=${id}`)),
-        catchError(this.handleError<Hero>(`getHero id=${id}`))
+        catchError(this.handleError<Hero>(`get Hero id=${id}`))
     );
   }
 
@@ -47,6 +49,15 @@ export class HeroService {
         // TODO: better job of transforming error for user consumption
         this.log(`${operation} failed: ${error.message}`);
     
+        if (error.status==501){
+          this.snackBar.open("Server Error! This hero already exists!", "Ok");
+        }
+        else if (error.status==502){
+          this.snackBar.open("Server Error! Wrong data!", "Ok");
+        }
+        else if (error.status==200 || error.status==0){
+          this.snackBar.open(operation + " completed successfully", "Ok");
+        }
         // Let the app keep running by returning an empty result.
         return of(result as T);
     };
@@ -57,7 +68,7 @@ export class HeroService {
     const url = `${this.heroesUrl}/${hero._id}`;
     return this.http.put(url, hero).pipe(
       tap(_ => this.log(`updated hero id=${hero._id}`)),
-      catchError(this.handleError<any>('updateHero'))
+      catchError(this.handleError<any>('Update Hero'))
     );
   }
 
@@ -65,7 +76,7 @@ export class HeroService {
   addHero (hero: Hero): Observable<Hero> {
     return this.http.post<Hero>(this.heroesUrl, hero).pipe(
      tap((hero: Hero) => this.log(`added hero w/ id=${hero._id}`)),
-      catchError(this.handleError<Hero>('addHero'))
+      catchError(this.handleError<Hero>('Add Hero'))
     );
   } 
 
@@ -75,7 +86,7 @@ export class HeroService {
   
     return this.http.delete<Hero>(url).pipe(
       tap(_ => this.log(`deleted hero id=${id}`)),
-      catchError(this.handleError<Hero>('deleteHero'))
+      catchError(this.handleError<Hero>('Delete Hero'))
     );
   }
 
@@ -86,7 +97,7 @@ export class HeroService {
     }
     return this.http.get<Hero[]>(`api/heroes/search/${term}`).pipe(
       tap(_ => this.log(`found heroes matching "${term}"`)),
-      catchError(this.handleError<Hero[]>('searchHeroes', []))
+      catchError(this.handleError<Hero[]>('Search Heroes', []))
     );
   }
 

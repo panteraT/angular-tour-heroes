@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Hero } from '../hero';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
@@ -31,6 +31,10 @@ export class CreateHeroComponent implements OnInit {
     private heroService: HeroService,
     public snackBar: MatSnackBar) { }
 
+    ngOnInit() {
+      this.getHeroes();
+    }
+
     getHeroes(): void {
       this.heroService.getHeroes()
       .subscribe(heroes => {this.heroes = heroes});
@@ -40,6 +44,11 @@ export class CreateHeroComponent implements OnInit {
     add(name: string, scope: number): void {
       var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$'); 
       name = name.trim();
+      if (!name  || !regul.test(name)) { 
+        this.snackBar.open("Wrong name! ", "Ok");
+        return; 
+      }
+
       try{ 
         var color = this.colorControl.value.trim();       
         if (!this.colors.find(c=>c==color)) {
@@ -49,6 +58,11 @@ export class CreateHeroComponent implements OnInit {
       catch(e){
         this.snackBar.open("Wrong color! ", "Ok");
         return;
+      }
+
+      if (!scope || scope<=0){
+        this.snackBar.open("Wrong scope! ", "Ok");
+        return; 
       }
      
       try{ 
@@ -62,34 +76,9 @@ export class CreateHeroComponent implements OnInit {
         return;
       }
 
-      if (!name  || !regul.test(name)) { 
-        this.snackBar.open("Wrong name! ", "Ok");
-        return; 
-      }
-      else if (this.heroes.find(h=>h.name==name)){
-        this.snackBar.open("This name already exists! ", "Ok");
-        return;
-      }
-      
-      if (!scope || scope<0){
-        this.snackBar.open("Wrong scope! ", "Ok");
-        return; 
-      }
-
       this.heroService.addHero({ name, color, scope, type } as Hero)
-        .subscribe(hero => {
-          this.heroes.push(hero);
-        });
-      this.snackBar.open("The hero "+name+" was added! ", "Ok");
-      this.location.back();
-    }
-
-    ngOnInit() {
-      this.heroService.getHeroes()
-      .subscribe(heroes => {
-            this.heroes = heroes
-        }
-      );
+        .subscribe(() => this.location.back());
+      
     }
 
 }

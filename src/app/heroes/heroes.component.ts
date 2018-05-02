@@ -28,14 +28,12 @@ export class HeroesComponent implements OnInit{
 
   constructor (
       private heroService: HeroService,
-      public dialog: MatDialog,
-      public snackBar: MatSnackBar) {}
+      public dialog: MatDialog) {}
 
   public openModal(hero: Hero){
     const dialog =this.dialog.open(DialogViewComponent, {data: {question: 'Do you really want to delete the hero?', hero: hero}});
     
     dialog.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       if ((result != null) && (result.hero != null)) {
         this.delete(result.hero);
       }
@@ -66,7 +64,6 @@ export class HeroesComponent implements OnInit{
   delete(hero: Hero): void {
     this.heroes = this.heroes.filter(h => h !== hero);
     this.heroService.deleteHero(hero).subscribe();
-    this.snackBar.open("The hero "+hero.name+" was deleted! ", "Ok");
     this.getHeroes();
   }
 

@@ -3,6 +3,9 @@ const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
+var colors =["grey", "red", "green", "blue"];
+var types = ["warrior","hunter","healer","mage","rogue"];
+var regul = RegExp('^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$');
 // Connect     mongodb://localhost:27017/heroesCollection
 // mongodb://admin:1111@ds213759.mlab.com:13759/heroes
 
@@ -100,7 +103,8 @@ router.post('/heroes', function(req, res){
         hour: 'numeric',
         minute: 'numeric',
         
-      };
+    };
+    
     var hero = {
         name: req.body.name, 
         color: req.body.color, 
@@ -108,38 +112,75 @@ router.post('/heroes', function(req, res){
         date: new Date().toLocaleString("en-US",options),
         type: req.body.type
     };
-    console.log( 'request put new hero!' );
-    connection((db) =>{ 
-        db.collection('heroesCollection').insert(hero, function(err,result){
-            if (err){
-                console.log(err);
-                return res.sendStatus(500);
-            }
-            res.send(hero);
-        })
-    })
-})
 
-router.put('/heroes/:id', function(req, res){
-    console.log('update hero!');
-    connection((db) => {
-        db.collection('heroesCollection').update(
-            {_id: ObjectID(req.params.id)},
-            {name: req.body.name,
-            color: req.body.color,
-            scope: req.body.scope,
-            date: req.body.date,
-            type: req.body.type},
-            function (err,result){
+    if (!req.body.name || !regul.test(req.body.name) || !req.body.color || !colors.find(c=>c==req.body.color)
+        || !req.body.type || !types.find(t=>t==req.body.type) ||!req.body.scope || req.body.scope<=0 ){
+        console.log("Server Error!");
+        return res.status(502).send("Server Error! Wrong data!");
+    }
+
+    connection((db) =>{ db.collection('heroesCollection').findOne({name: req.body.name},function (err,result){
+        if (err){
+            console.log(err);
+            return res.sendStatus(500);
+        }
+        if (result){
+            console.log("Was found hero "+ result.name +" Server Error! This hero already exists!");
+            return res.status(501).send("This hero already exists!");
+        }
+        else {
+            console.log( 'Put new hero!' + hero.name);
+            connection((db) =>{ 
+                db.collection('heroesCollection').insert(hero, function(err,result){
                 if (err){
                     console.log(err);
                     return res.sendStatus(500);
                 }
-            res.sendStatus(200);
+                res.sendStatus(200);
+            })});
         }
-    )
-})
-})
+    })});
+});
+
+router.put('/heroes/:id', function(req, res){
+    if (!req.body.name || !regul.test(req.body.name) || !req.body.color || !colors.find(c=>c==req.body.color)
+        || !req.body.type || !types.find(t=>t==req.body.type) ||!req.body.scope || req.body.scope<0 || !req.body.date){
+        console.log("Server Error!");
+        return res.status(502).send("Server Error! Wrong data!");
+    }
+   
+    connection((db) =>{ db.collection('heroesCollection')
+        .findOne({$and:[{name: req.body.name},{_id:{$ne: ObjectID(req.params.id)}}]},function (err,result){
+            if (err){
+                console.log(err);
+                return res.sendStatus(500);
+            }
+            if (result){
+                console.log("Was found hero "+ result.id +". Server Error! This hero already exists!");
+             //   throw new SyntaxError("This hero already exists!");
+                return res.status(501).send("This hero already exists!");
+            }
+            else {
+                console.log('Update hero!');
+                connection((db) => {
+                    db.collection('heroesCollection').update(
+                        {_id: ObjectID(req.params.id)},
+                        {name: req.body.name,
+                        color: req.body.color,
+                        scope: req.body.scope,
+                        date: req.body.date,
+                        type: req.body.type},
+                        function (err,result){
+                            if (err){
+                                console.log(err);
+                                return res.sendStatus(500);
+                            }
+                            res.sendStatus(200);
+                        })
+                })
+            }
+        })})
+});
 
 router.delete('/heroes/:id', (req, res) => {
     console.log( 'request delete for id!');
@@ -156,5 +197,6 @@ router.delete('/heroes/:id', (req, res) => {
     })
     
 });
+
 
 module.exports = router;

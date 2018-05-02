@@ -10,6 +10,10 @@ const api = require('./server/routes/api');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
 
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist')));

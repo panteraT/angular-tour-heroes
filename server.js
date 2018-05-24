@@ -6,7 +6,8 @@ var app= express();
 var debaug = require('debug')('expressdebug: server')
 
 // API file for interacting with MongoDB
-const api = require('./server/routes/api');
+const apihero = require('./server/routes/apihero');
+const apiuser = require('./server/routes/apiuser');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -18,7 +19,8 @@ app.use(function(err, req, res, next) {
 // Angular DIST output folder
 app.use(express.static(path.join(__dirname, 'dist')));
 // API location
-app.use('/api', api);
+app.use('/apihero', apihero);
+app.use('/apiuser', apiuser);
 
 // Send all other requests to the Angular app
 app.get('*', (req, res) => {

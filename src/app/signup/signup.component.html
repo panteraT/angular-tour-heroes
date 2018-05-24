@@ -1,0 +1,14 @@
+<mat-dialog-actions id="signup">
+  <h1>Personal information</h1>
+  <fieldset id="inputs">
+      <input id="firstName" type="text" placeholder="first name"  #firstName> 
+      <input id="lastName" type="text" placeholder="last name"  #lastName> 
+      <input id="email" type="text" placeholder="email"  #email> 
+      <input id="userName" type="text" placeholder="login"  #userName>   
+      <input id="password" type="password" placeholder="password" #password>
+  </fieldset>
+  <fieldset id="actions">
+      <button  mat-raised-button id="submit" value="Sign up" (click)="addUser(firstName.value, lastName.value, email.value, userName.value, password.value)">Sign up</button>
+      <button  mat-raised-buttona id="submit" (click)="close()">Close</button>
+  </fieldset>
+</mat-dialog-actions>

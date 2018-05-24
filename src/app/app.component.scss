@@ -28,3 +28,20 @@ nav a:hover {
 nav a.active {
   color: #039be5;
 }
+#signup {
+  float: right;
+}
+button {
+  padding: 5px 10px;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+  background-color: #eee;
+  border-radius: 8px;
+  font-size: 1.2em;
+}
+
+button:hover {
+  color: #039be5;
+  background-color: #CFD8DC;
+}

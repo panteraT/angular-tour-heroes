@@ -1,0 +1,12 @@
+<mat-dialog-actions id="login">
+  <h1>Autorization form</h1>
+  <fieldset id="inputs">
+          
+      <input id="userName" type="text" placeholder="login"   [(ngModel)]="login">   
+      <input id="password" type="password" placeholder="password"  [(ngModel)]="password">
+
+      <button  mat-raised-button id="submit" value="Sign in" (click)="getUser(login, password)">Sign in</button>
+      <button  mat-raised-button id="submit" (click)="close()">Close</button>
+  </fieldset>
+  
+</mat-dialog-actions>

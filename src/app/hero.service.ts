@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material';
 @Injectable()
 export class HeroService {
 
-  private heroesUrl = 'api/heroes';  // URL to web api
+  private heroesUrl = 'apihero/heroes';  // URL to web api
 
   
   constructor(
@@ -95,7 +95,7 @@ export class HeroService {
       // if not search term, return empty hero array.
       return of([]);
     }
-    return this.http.get<Hero[]>(`api/heroes/search/${term}`).pipe(
+    return this.http.get<Hero[]>(`apihero/heroes/search/${term}`).pipe(
       tap(_ => this.log(`found heroes matching "${term}"`)),
       catchError(this.handleError<Hero[]>('Search Heroes', []))
     );

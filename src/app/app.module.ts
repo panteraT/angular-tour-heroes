@@ -26,6 +26,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreateHeroComponent } from './create-hero/create-hero.component';
 import { DialogViewComponent } from './dialog-view/dialog-view.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { SignupComponent } from './signup/signup.component';
+import { UserService } from './user.service';
+import { LoginComponent } from './login/login.component';
+import { TokenService } from './token.service';
 
 
 @NgModule({
@@ -37,6 +41,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     DashboardComponent,
     CreateHeroComponent,
     DialogViewComponent,
+    SignupComponent,
+    LoginComponent,
   
   ],
   
@@ -61,9 +67,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     HttpClientModule
     
   ],
-  providers: [HeroService, MessageService],
+  providers: [HeroService, MessageService, UserService,TokenService],
   bootstrap: [AppComponent],
-  entryComponents: [DialogViewComponent]
+  entryComponents: [DialogViewComponent, SignupComponent, LoginComponent]
 })
 
 export class AppModule { }

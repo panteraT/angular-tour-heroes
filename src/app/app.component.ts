@@ -12,7 +12,7 @@ import { TokenService } from './token.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent {
   title = 'Tour of Heroes';
   users: User[];
   user: User;
@@ -22,30 +22,17 @@ export class AppComponent implements OnInit{
     private userService: UserService,
     private tokenService: TokenService) {}
 
-  getUsers(): void {
-      this.userService.getUsers()
-      .subscribe(users => {this.users = users});
-  }
-  ngOnInit(){
-    this.getUsers();
-  }
+ 
 
   public openModalSignup(){
-    const dialog =this.dialog.open(SignupComponent, {data: {subject: 'Sign up form'}});
+    this.dialog.open(SignupComponent, {data: {subject: 'Sign up form'}});
   }
 
-  getUser(login: string, pass: string){
-   
-      this.userService.getUser(login,pass).subscribe(user=>this.user=user);
+  public openModalLogin(){
+    this.dialog.open(LoginComponent, {data: {subject: 'Sign in  form'}});
+  }
+
   
-      console.log(this.user);
-      if (this.user){
-        this.tokenService.getToken(login).subscribe(token => window.localStorage.setItem("token", token.token));
-        window.localStorage.setItem("userLogin", this.user.login)
-
-      
-      }
-  }
 
   closeInformation(){
     window.localStorage.clear();

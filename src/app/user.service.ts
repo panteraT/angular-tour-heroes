@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { User } from './user';
 import {Token } from './token';
 import { MatSnackBar } from '@angular/material';
+import { MessageService } from './message.service';
 
 
 @Injectable()
@@ -18,7 +19,7 @@ export class UserService {
   
   constructor(
     private http: HttpClient,
-   // private messageService: MessageService,
+    private messageService: MessageService,
     public snackBar: MatSnackBar
   ) { }
 
@@ -73,7 +74,7 @@ export class UserService {
   }
 
   private log(message: string) {
-   // this.messageService.add('HeroService: ' + message);
+    this.messageService.add('HeroService: ' + message);
   }
 
 

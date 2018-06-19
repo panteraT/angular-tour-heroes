@@ -128,8 +128,14 @@ router.post('/users', function(req, res){
 router.get('/token/:login', (req, res) => {
     console.log('get token by login!');
 
-    var tokenObj = JSON.parse(localStorage.getItem('token'+ req.params.login));
-    res.send(tokenObj);
+    try{
+        var tokenObj = JSON.parse(localStorage.getItem('token'+ req.params.login));
+        res.send(tokenObj);
+    }
+    catch(e){
+         console.log('Server error with null token');
+        res.sendStatus(500)
+    }
 });
 
 router.put('/token/:login', (req, res) => {
@@ -139,9 +145,9 @@ router.put('/token/:login', (req, res) => {
     var tokenObj = {
         token: token,
         userLogin: req.params.login,
-        timeLifeToken: thisTime +1800000     // (1800000 ms)
+        timeLifeToken: thisTime +1800000     // (1800000 ms = 30 min)
     }
-    localStorage.setItem('token'+ req.params.login);
+    localStorage.setItem('token'+ req.params.login,JSON.stringify(tokenObj));
     res.send(tokenObj);
 });
 
@@ -160,5 +166,6 @@ router.delete('/users/:id', (req, res) => {
     })
     
 });
+
 
 module.exports = router;

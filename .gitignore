@@ -1,5 +1,8 @@
-﻿#ignoring node-modul
+#ignoring node-modul
 node_modules/
+
+#ignoring screatch
+screatch/
 
 #Ignoring dist
 dist/

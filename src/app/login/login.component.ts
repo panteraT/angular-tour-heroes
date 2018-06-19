@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { UserService } from '../user.service';
 import { User } from '../user';
 import { Token } from '../token';
+import { TokenService } from '../token.service';
 
 
 @Component({
@@ -12,24 +13,19 @@ import { Token } from '../token';
   encapsulation: ViewEncapsulation.Emulated
 
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent  {
 
   user: User;
   users: User[];
-  login: string;
-  passwprd: string;
+  
 
   constructor( 
     private MatDialogRef: MatDialogRef<LoginComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: any,
     private userService: UserService,
+    private tokenService: TokenService,
     public snackBar: MatSnackBar){}
 
-  ngOnInit() {
-    if (this.login && this.passwprd){
-      this.getUser(this.login,this.passwprd);
-    }
-  }
   
   close(){
 		this.MatDialogRef.close();
@@ -37,16 +33,14 @@ export class LoginComponent implements OnInit {
   
   getUser(login: string, pass: string){
    
-  /*  this.userService.getUser(login,pass).subscribe(user=>this.user=user);
-
-    console.log(this.user);
-    if (this.user){
-      this.userService.getToken(login).subscribe(token => window.localStorage.setItem("token", token.token));
+    this.userService.getUser(login,pass).toPromise()
+    .then(user=>{this.user=user;
+      console.log(this.user);
+      return user;})
+    .then(user=>{this.tokenService.getToken(login).subscribe(token => window.localStorage.setItem("token", token.token));
       window.localStorage.setItem("userLogin", this.user.login)
-      this.MatDialogRef.close();
-    
-    }
-    */
+    })
+    .then(user=>this.MatDialogRef.close())
   }
 
 

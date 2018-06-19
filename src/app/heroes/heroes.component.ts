@@ -12,6 +12,9 @@ import { Subject } from 'rxjs/Subject';
 import { debounceTime } from 'rxjs/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 import { switchMap } from 'rxjs/operators/switchMap';
+import { UserService } from '../user.service';
+import { TokenService } from '../token.service';
+import { Token } from '../token';
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
@@ -23,21 +26,49 @@ import { switchMap } from 'rxjs/operators/switchMap';
 export class HeroesComponent implements OnInit{
   
   heroes: Hero[];
+  serverToken: Token;
+  userLogin = window.localStorage.getItem('userLogin'); //получили токен из браузера
   minDate = new Date();
   maxDate = new Date();
 
   constructor (
       private heroService: HeroService,
+      private tokenService: TokenService,
+      public snackBar: MatSnackBar,
       public dialog: MatDialog) {}
 
   public openModal(hero: Hero){
-    const dialog =this.dialog.open(DialogViewComponent, {data: {question: 'Do you really want to delete the hero?', hero: hero}});
-    
-    dialog.afterClosed().subscribe(result => {
-      if ((result != null) && (result.hero != null)) {
-        this.delete(result.hero);
-      }
-    });
+
+      this.tokenService.getToken(this.userLogin).toPromise()  // получили токен из сервера
+      .then(token=> this.serverToken = token)
+      .then(token=> {   //затем проверили равенство двух токенов
+
+        if (token && window.localStorage.getItem('token')==this.serverToken.token){
+          //удалили героя 
+          const dialog =this.dialog.open(DialogViewComponent, {data: {question: 'Do you really want to delete the hero?', hero: hero}});
+      
+          dialog.afterClosed().subscribe(result => {
+            if ((result != null) && (result.hero != null)) {
+              this.delete(result.hero);
+            }
+          });
+          let time = Date.now();
+          // проверили время жизни токена. Если оно просрочено - мы обновляем их
+          if (this.serverToken.timeLifeToken < time){
+              this.tokenService.putToken(this.userLogin).toPromise() //обновили на сервере
+              .then(token=>{
+                this.serverToken = token;
+                window.localStorage.setItem('token', token.token); // обновили в браузере
+
+              });
+          }
+        }
+        // если токены не равны
+        else{
+          this.snackBar.open("You can't delete because you aren't registred! Please login! ", "Ok");
+          return; 
+        }
+    }); 
   }
 
   ngOnInit() {

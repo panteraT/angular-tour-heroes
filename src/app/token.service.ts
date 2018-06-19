@@ -8,6 +8,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { User } from './user';
 import {Token } from './token';
 import { MatSnackBar } from '@angular/material';
+import { MessageService } from './message.service';
 
 @Injectable()
 export class TokenService {
@@ -17,18 +18,27 @@ export class TokenService {
   
   constructor(
     private http: HttpClient,
-   // private messageService: MessageService,
+    private messageService: MessageService,
     public snackBar: MatSnackBar
   ) { }
 
   getToken(login: string): Observable<Token>{
-    const url = `apiuser/token/${login}`;
-    return this.http.get<Token>(url)    
-    .pipe(
-      tap(_ => this.log(`created token`)),
-      catchError(this.handleError<Token>(`get Token `))
-  );
+      const url = `apiuser/token/${login}`;
+      return this.http.get<Token>(url)    
+        .pipe(
+          tap(_ => this.log(`get token`)),
+          catchError(this.handleError<Token>(`get Token `))
+      );
   }
+
+  putToken(login: string): Observable<Token>{
+    const url = `apiuser/token/${login}`;
+    return this.http.put(url, login).pipe(
+      tap(_ => this.log(`updated token by login=${login}`)),
+      catchError(this.handleError<any>('Update token'))
+    );
+  }
+
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
     
@@ -38,21 +48,12 @@ export class TokenService {
         // TODO: better job of transforming error for user consumption
         this.log(`${operation} failed: ${error.message}`);
     
-        if (error.status==501){
-          this.snackBar.open("Server Error! This user already exists!", "Ok");
-        }
-        else if (error.status==502 || error.status==0){
-          this.snackBar.open("Server Error! Wrong data!", "Ok");
-        }
-        else if (error.status==200 ){
-          this.snackBar.open(operation + " completed successfully", "Ok");
-        }
         // Let the app keep running by returning an empty result.
         return of(result as T);
     };
   }
 
   private log(message: string) {
-   // this.messageService.add('HeroService: ' + message);
+    this.messageService.add('TokenService: ' + message);
   }
 }

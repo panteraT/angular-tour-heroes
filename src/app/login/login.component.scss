@@ -2,7 +2,7 @@
 {
     background-color: #fff;
      
-    height: 340px;
+    height: 240px;
     width: 400px;
     margin: -150px 0 0 -230px;
     padding: 30px;
@@ -113,12 +113,6 @@ fieldset
     box-shadow: 0 0 0 1px #e8c291 inset;
 }
 
-/*--------------------*/
-#button
-{
-    margin: 25px 0 0 0;
-}
-
 #submit
 {		
     background-color: #ffb94b;
@@ -138,9 +132,10 @@ fieldset
     border-color: #d69e31 #e3a037 #d5982d #e3a037;
 
     float: left;
+    margin-left: 5px;
     height: 35px;
     padding: 0;
-    width: 130px;
+    width: 190px;
     cursor: pointer;
     font: bold 15px Arial, Helvetica;
     color: #8f5a0a;
@@ -166,21 +161,4 @@ fieldset
   border: none;
 }
 
-#actions a
-{
-    color: #3151A2;    
-    float: right;
-    line-height: 35px;
-    margin-left: 10px;
-}
 
-/*--------------------*/
-
-#back
-{
-    display: block;
-    text-align: center;
-    position: relative;
-    top: 60px;
-    color: #999;
-}

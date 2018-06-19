@@ -5,6 +5,8 @@ import { Location } from '@angular/common';
 import {FormControl} from '@angular/forms';
 import {MatSnackBar} from '@angular/material';
 import { HeroService }  from '../hero.service';
+import { TokenService } from '../token.service';
+import { Token } from '../token';
 
 @Component({
   selector: 'app-create-hero',
@@ -14,6 +16,7 @@ import { HeroService }  from '../hero.service';
 export class CreateHeroComponent implements OnInit {
 
   heroes: Hero[];
+  serverToken: Token;
   
   minDate = new Date();
   maxDate = new Date();
@@ -24,11 +27,13 @@ export class CreateHeroComponent implements OnInit {
   
   colors =["grey", "red", "green", "blue"];
   types = ["warrior","hunter","healer","mage","rogue"];
+  userLogin = window.localStorage.getItem('userLogin'); //получили токен из браузера
 
   constructor( 
     private route: ActivatedRoute,
     private location: Location,
     private heroService: HeroService,
+    private tokenService: TokenService,
     public snackBar: MatSnackBar) { }
 
     ngOnInit() {
@@ -39,6 +44,30 @@ export class CreateHeroComponent implements OnInit {
       this.heroService.getHeroes()
       .subscribe(heroes => {this.heroes = heroes});
      
+    }
+
+    checkUser(name: string, scope: number){
+      this.tokenService.getToken(this.userLogin).toPromise()  // получили токен из сервера
+      .then(token=> this.serverToken = token)
+      .then(token=> {   //затем проверили равенство двух токенов
+        if (token && window.localStorage.getItem('token')==this.serverToken.token){
+          this.add(name,scope);
+          let time = Date.now();
+          // проверили время жизни токена. Если оно просрочено - мы обновляем их
+          if (this.serverToken.timeLifeToken < time){
+              this.tokenService.putToken(this.userLogin).toPromise() //обновили на сервере
+              .then(token=>{
+                this.serverToken = token;
+                window.localStorage.setItem('token', token.token); // обновили в браузере
+
+              });
+          }
+        }
+        else{
+          this.snackBar.open("You can't create a new hero because you aren't registred! Please login! ", "Ok");
+          return; 
+        }
+      })
     }
 
     add(name: string, scope: number): void {

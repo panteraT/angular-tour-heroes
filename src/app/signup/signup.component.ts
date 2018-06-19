@@ -16,10 +16,9 @@ import { TokenService } from '../token.service';
   styleUrls: ['./signup.component.scss'],
   encapsulation: ViewEncapsulation.Emulated
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent  {
 
-  users: User[];
- // tokenObj: Token;
+  token: Token;
 
   constructor( 
     private MatDialogRef: MatDialogRef<SignupComponent>, 
@@ -28,16 +27,6 @@ export class SignupComponent implements OnInit {
     private tokenService: TokenService,
     public snackBar: MatSnackBar) { }
 
-
-  ngOnInit() {
-    this.getUsers();
-  }
-  
-  getUsers(): void {
-      this.userService.getUsers()
-      .subscribe(users => {this.users = users});
-     
-  }
 
   close(){
 		this.MatDialogRef.close();
@@ -70,16 +59,14 @@ export class SignupComponent implements OnInit {
       this.snackBar.open("Wrong email! ", "Ok");
       return; 
     }
-    this.userService.addUser({ firstName, lastName, email, login, password } as User)
-      .subscribe();
 
-    this.tokenService.getToken(login).subscribe(token => window.localStorage.setItem("token", token.token));
-    window.localStorage.setItem("userLogin", login)
+    this.userService.addUser({ firstName, lastName, email, login, password } as User).toPromise()
+    .then(user=>{
+      this.tokenService.getToken(login).subscribe(token => window.localStorage.setItem("token", token.token));
+      window.localStorage.setItem("userLogin", login);
+    })
+    .then(user=>this.MatDialogRef.close());
   
-    this.MatDialogRef.close();
-    
   }
-
-
 
 }

@@ -9,6 +9,8 @@ import { filter } from 'rxjs/operators';
 import { Observer } from 'rxjs/Observer';
 import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Observable } from 'rxjs/Observable';
+import { TokenService } from '../token.service';
+import { Token } from '../token';
 
 
 @Component({
@@ -24,15 +26,18 @@ export class HeroDetailComponent implements OnInit {
   @Input() hero: Hero;
 
   heroes: Hero[];
+  serverToken: Token;
   colorControl: FormControl = new FormControl();
   typeControl: FormControl = new FormControl();
 
   colors =["grey", "red", "green", "blue"];
   types = ["warrior","hunter","healer","mage","rogue"];
+  userLogin = window.localStorage.getItem('userLogin'); //получили токен из браузера
 
   constructor( 
     private route: ActivatedRoute,
     private heroService: HeroService,
+    private tokenService: TokenService,
     private location: Location,
     public snackBar: MatSnackBar) { }
 
@@ -61,6 +66,30 @@ export class HeroDetailComponent implements OnInit {
 
   goBack(): void{
     this.location.back();
+  }
+
+  checkUser(){
+    this.tokenService.getToken(this.userLogin).toPromise()  // получили токен из сервера
+    .then(token=> this.serverToken = token)
+    .then(token=> {   //затем проверили равенство двух токенов
+      if (token && window.localStorage.getItem('token')==this.serverToken.token){
+        this.save();
+        let time = Date.now();
+        // проверили время жизни токена. Если оно просрочено - мы обновляем их
+        if (this.serverToken.timeLifeToken < time){
+            this.tokenService.putToken(this.userLogin).toPromise() //обновили на сервере
+            .then(token=>{
+              this.serverToken = token;
+              window.localStorage.setItem('token', token.token); // обновили в браузере
+
+            });
+        }
+      }
+      else{
+        this.snackBar.open("You can't update hero because you aren't registred! Please login! ", "Ok");
+        return; 
+      }
+    })
   }
   
   save(): void {

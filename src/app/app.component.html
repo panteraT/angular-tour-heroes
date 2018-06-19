@@ -1,15 +1,8 @@
 <h1>{{title}}</h1>
 <div id="signup">
   <button class="signup" (click)="openModalSignup()" > Sign up </button>
-  <button class="goback" (click)="closeInformation()">Go out</button>
-  <div>
-      <input id="userName" type="text" placeholder="login" #userName>   
-      <input id="password" type="password" placeholder="password"  #password>
-
-      <button  mat-raised-button id="submit" value="Sign in" (click)="getUser(userName.value, password.value)">Sign in</button>
-      
-  </div>
-  
+  <button  id="submit" (click)="openModalLogin()">Sign in</button>
+    
 </div>
 <nav>
   <a routerLink="/dashboard">Dashboard</a>
